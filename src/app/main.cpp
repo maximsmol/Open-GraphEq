@@ -15,72 +15,7 @@
 using namespace rolmodl;
 
 int main() {
-  SDL_version compiled;
-  SDL_version linked;
-
-  SDL_VERSION(&compiled);
-  SDL_GetVersion(&linked);
-  printf("We compiled against SDL version %d.%d.%d ...\n",
-         compiled.major, compiled.minor, compiled.patch);
-  printf("But we are linking against SDL version %d.%d.%d.\n",
-         linked.major, linked.minor, linked.patch);
-
-  SDL_Window* win = SDL_CreateWindow("test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, 0);
-  SDL_Renderer* ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_TARGETTEXTURE);
-  SDL_Texture* tex = SDL_CreateTexture(ren, SDL_PIXELFORMAT_RGBA8888, 400, 300, SDL_TEXTUREACCESS_TARGET);
-
-  SDL_RenderClear(ren);
-
-  SDL_SetRenderTarget(ren, tex);
-  SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
-  SDL_RenderClear(ren);
-  SDL_SetRenderTarget(ren, nullptr);
-
-  bool running = true;
-  int i = 0;
-  SDL_Event e{};
-  while (running) {
-    while (SDL_PollEvent(&e) != 0) {
-      if (e.type == SDL_QUIT)
-        running = false;
-      else if (i <= 0)
-        printf("%d\n", e.type);
-    }
-
-    SDL_Delay(1000/60);
-
-    if (i > 0)
-      continue;
-    ++i;
-    SDL_SetRenderTarget(ren, nullptr);
-    SDL_SetRenderDrawColor(ren, 0, 0, 100, 255);
-    SDL_RenderClear(ren);
-
-    SDL_SetRenderTarget(ren, tex);
-    SDL_SetRenderDrawColor(ren, 0, 100, 100, 255);
-    SDL_RenderClear(ren);
-
-    SDL_SetRenderDrawColor(ren, 0, 0, 255, 255);
-    SDL_RenderDrawLine(ren, 0, 0, 100, 100);
-
-    // SDL_SetRenderTarget(ren, nullptr);
-    // SDL_SetRenderDrawColor(ren, 0, 0, 100, 255);
-    // SDL_RenderClear(ren);
-
-    SDL_Rect src{0, 0, 400, 300};
-    SDL_Rect dist{0, 0, 400, 300};
-    SDL_RenderCopy(ren, tex, &src, &dist);
-
-    SDL_RenderPresent(ren);
-  }
-
-  SDL_DestroyTexture(tex);
-  SDL_DestroyRenderer(ren);
-  SDL_DestroyWindow(win);
-
-  return 0;
-
-  /*signal(SIGSEGV, handler);
+  signal(SIGSEGV, handler);
   signal(SIGABRT, handler);
 
   geom::Size size = geom::Size{800, 800};
@@ -195,11 +130,11 @@ int main() {
         dragging = false;
         dragEnd = std::get<event::mouse::button::Up>(e).pos;
 
-        // I_type x = g.pixelToRealH(intervalFromReals<I_type>(dragStart.x, dragEnd.x));
-        // I_type y = g.pixelToRealV(intervalFromReals<I_type>(screen.h-dragStart.y, screen.h-dragEnd.y));
-        // I_type fx = f_x(x);
-        // BoolInterval fy = f_y(fx, y);
-        // printf("fx<%f %f> = <%f %f> -> fy = <%d %d> for <%f %f>\n", x.unsafeA(), x.unsafeB(), fx.unsafeA(), fx.unsafeB(), fy.a(), fy.b(), y.unsafeA(), y.unsafeB());
+        I_type x = g.pixelToRealH(intervalFromReals<I_type>(dragStart.x, dragEnd.x));
+        I_type y = g.pixelToRealV(intervalFromReals<I_type>(screen.h-dragStart.y, screen.h-dragEnd.y));
+        I_type fx = f_x(x);
+        BoolInterval fy = f_y(fx, y);
+        printf("fx<%f %f> = <%f %f> -> fy = <%d %d> for <%f %f>\n", x.unsafeA(), x.unsafeB(), fx.unsafeA(), fx.unsafeB(), fy.a(), fy.b(), y.unsafeA(), y.unsafeB());
       }
       else if (std::holds_alternative<event::mouse::Motion>(e)) {
         if (dragging) {
@@ -211,10 +146,10 @@ int main() {
       e_opt = event::poll();
     }
 
-    // if (!rerender) {
-    //   SDL_Delay(1000/60);
-    //   continue;
-    // }
+    if (!rerender) {
+      SDL_Delay(1000/60);
+      continue;
+    }
 
     if (nextStep) {
       if (renStep == 1) {
@@ -239,8 +174,8 @@ int main() {
 
     r.clear();
 
-    // r.drawTex(graph);
-    // if (rendergrid) r.drawTex(grid);
+    r.drawTex(graph);
+    if (rendergrid) r.drawTex(grid);
 
     if (dragging) {
       r.setColor(RGBA{164, 205, 255, 125});
@@ -249,14 +184,10 @@ int main() {
       r.setColor(RGBA{100, 0, 0});
     }
 
-    r.setColor(RGBA{0, 255, 0});
-    r.drawLine(geom::Pos{0, 0}, geom::Pos{100, 100});
-    r.setColor(RGBA{100, 0, 0});
-
     r.present();
     rerender = false;
     SDL_Delay(1000/60);
   }
 
-  return EXIT_SUCCESS;*/
+  return EXIT_SUCCESS;
 }
