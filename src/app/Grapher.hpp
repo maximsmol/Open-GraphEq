@@ -74,7 +74,6 @@ struct Grapher {
     void finish()  {
       while (k_ >= 0 && !U_.empty()) {
         step();
-        --k_;
       }
     }
     void drawCurGrid() {
@@ -83,6 +82,7 @@ struct Grapher {
         ren_.drawRect(regionToRect(p.first, p.second));
     }
     void step() {
+      --k_;
       printf("  U_len: %lu, U1_len: %lu\n", U_.size(), U1_.size());
 
       U1_.clear();
