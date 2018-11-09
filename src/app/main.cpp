@@ -115,6 +115,21 @@ int main() {
           nextStep = true;
           ++renStep;
         }
+        else if (sym == SDLK_RETURN) {
+          SDL_SetRenderTarget(r.unsafeRaw(), graph.unsafeRaw());
+          g.finish();
+          r.setColor(RGBA{0, 0, 0});
+          SDL_SetRenderTarget(r.unsafeRaw(), nullptr);
+
+          SDL_SetRenderTarget(r.unsafeRaw(), grid.unsafeRaw());
+
+          g.drawCurGrid();
+
+          r.setColor(RGBA{0, 0, 0});
+          SDL_SetRenderTarget(r.unsafeRaw(), nullptr);
+
+          rerender = true;
+        }
         else if (sym == SDLK_g) {
           rendergrid = !rendergrid;
           rerender = true;
