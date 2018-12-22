@@ -22,20 +22,22 @@ int main() {
   geom::RectWH screen = geom::RectWH{0, 0, size.w, size.h};
 
   Win w("OpenGrapheq", size);
-  Ren r(w);
+  TexRen r(w);
 
-  SDL_SetRenderDrawBlendMode(r.unsafeRaw(), SDL_BLENDMODE_BLEND);
+  r.setBlendMode(BlendMode::blend);
 
   RenTex grid(r, pixelfmt::Id::rgba32, size);
   RenTex graph(r, pixelfmt::Id::rgba32, size);
 
-  SDL_SetTextureBlendMode(grid.unsafeRaw(), SDL_BLENDMODE_BLEND);
-  SDL_SetRenderTarget(r.unsafeRaw(), grid.unsafeRaw()); r.setColor(RGBA{0, 0, 0, 0}); r.clear();
+  grid.setBlendMode(BlendMode::blend);
+  graph.setBlendMode(BlendMode::blend);
 
-  SDL_SetTextureBlendMode(graph.unsafeRaw(), SDL_BLENDMODE_BLEND);
-  SDL_SetRenderTarget(r.unsafeRaw(), graph.unsafeRaw()); r.setColor(RGBA{0, 0, 0, 0}); r.clear();
+  r.setColor(RGBA{0, 0, 0, 0});
 
-  SDL_SetRenderTarget(r.unsafeRaw(), nullptr);
+  r.setTarget(grid); r.clear();
+  r.setTarget(graph); r.clear();
+
+  r.setDefaultTarget();
 
   Grapher<DTInterval>::graphfx* f_x = [](DTInterval x) {
       return intervalFromReals<DTInterval>(1, 1) / x;
@@ -107,30 +109,30 @@ int main() {
       if (std::holds_alternative<event::Quit>(e))
         running = false;
       else if (std::holds_alternative<event::key::Up>(e)) {
-        SDL_Keycode sym = std::get<event::key::Up>(e).sym.sym;
-        if (sym == SDLK_ESCAPE)
+        kb::Key k = std::get<event::key::Up>(e).sym.key;
+        if (k == kb::Key::escape)
           running = false;
-        else if (sym == SDLK_SPACE) {
+        else if (k == kb::Key::space) {
           rerender = true;
           nextStep = true;
           ++renStep;
         }
-        else if (sym == SDLK_RETURN) {
-          SDL_SetRenderTarget(r.unsafeRaw(), graph.unsafeRaw());
+        else if (k == kb::Key::enter) {
+          r.setTarget(graph);
           g.finish();
+
           r.setColor(RGBA{0, 0, 0});
-          SDL_SetRenderTarget(r.unsafeRaw(), nullptr);
+          r.setDefaultTarget();
 
-          SDL_SetRenderTarget(r.unsafeRaw(), grid.unsafeRaw());
-
+          r.setTarget(grid);
           g.drawCurGrid();
 
           r.setColor(RGBA{0, 0, 0});
-          SDL_SetRenderTarget(r.unsafeRaw(), nullptr);
+          r.setDefaultTarget();
 
           rerender = true;
         }
-        else if (sym == SDLK_g) {
+        else if (k == kb::Key::g) {
           rendergrid = !rendergrid;
           rerender = true;
         }
@@ -168,21 +170,21 @@ int main() {
 
     if (nextStep) {
       if (renStep == 1) {
-        SDL_SetRenderTarget(r.unsafeRaw(), grid.unsafeRaw());
+        r.setTarget(grid);
 
         g.drawCurGrid();
 
         r.setColor(RGBA{0, 0, 0});
-        SDL_SetRenderTarget(r.unsafeRaw(), nullptr);
+        r.setDefaultTarget();
       }
       else if (renStep == 2) {
-        SDL_SetRenderTarget(r.unsafeRaw(), graph.unsafeRaw());
+        r.setTarget(graph);
 
         g.step();
         renStep = 0;
 
         r.setColor(RGBA{0, 0, 0});
-        SDL_SetRenderTarget(r.unsafeRaw(), nullptr);
+        r.setDefaultTarget();
       }
       nextStep = false;
     }
@@ -201,7 +203,6 @@ int main() {
 
     r.present();
     rerender = false;
-    SDL_Delay(1000/60);
   }
 
   return EXIT_SUCCESS;
