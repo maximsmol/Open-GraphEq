@@ -1,6 +1,6 @@
 Open-GraphEq is a robust graphing application for mathematical formulae with 2 variables.
 
-It is an open source alternative to the shareware [GraphEq](http://www.peda.com/grafeq/).
+It is an open source alternative to the shareware [GrafEq](http://www.peda.com/grafeq/).
 
 Both GraphEq and Open-GraphEq are based on the methods described in [Reliable Two-Dimensional Graphing Methods for Mathematical Formulae with Two Free Variables](http://www.dgp.toronto.edu/~mooncake/papers/SIGGRAPH2001_Tupper.pdf) by Jeff Tupper of University of Toronto, SIGGRAPH 2001.
 
