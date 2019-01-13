@@ -6,6 +6,8 @@ Both GrafEq and Open-GraphEq are based on the methods described in [Reliable Two
 
 ## Status
 
+[![Video](vid.png)](https://youtu.be/Dp1GXxRjwaA)
+
 ![Screenshot](screenshot.png)
 
 The screenshot shows Open-GraphEq displaying a finished graph of `y < 1/x`. There is also a [demo screencast](https://youtu.be/Dp1GXxRjwaA).
